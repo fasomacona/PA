@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>1.1 Introducción a la programación avanzada con Python | Tema 1</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <header>
+    <div class="header-container">
+      <div class="logo">📊 GAB-2402 <span>Tema 1</span></div>
+      <nav>
+        <ul>
+          <li><a href="index.html">Inicio</a></li>
+          <li><a href="01-introduccion.html" class="active">1.1 Introducción</a></li>
+          <li><a href="02-numpy-pandas.html">1.2 NumPy & Pandas</a></li>
+          <li><a href="03-limpieza-datos.html">1.3 Limpieza de Datos</a></li>
+          <li><a href="practica.html">Práctica Jupyter</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <div class="breadcrumb">
+      <a href="index.html">Inicio</a> › 1.1 Introducción a la programación avanzada con Python
+    </div>
+
+    <section class="section">
+      <h2>1.1 Introducción a la programación avanzada con Python</h2>
+      
+      <p>
+        Antes de sumergirnos en las bibliotecas de ciencia de datos, es fundamental dominar 
+        las características avanzadas del propio lenguaje Python. Estas herramientas nos 
+        permiten escribir código más expresivo, eficiente y mantenible.
+      </p>
+
+      <h3>1. Estructuras de datos avanzadas</h3>
+      
+      <h4>Listas, tuplas, sets y diccionarios — uso profesional</h4>
+      <p>
+        Aunque ya conoces las estructuras básicas, en programación avanzada las usamos de 
+        forma más sofisticada: comprensión de colecciones, diccionarios anidados, sets para 
+        operaciones de conjuntos y namedtuples o dataclasses para estructuras inmutables.
+      </p>
+
+<pre><code><span class="cmt"># Comprensión de listas (List Comprehension)</span>
+cuadrados = [x**2 <span class="kw">for</span> x <span class="kw">in</span> range(10) <span class="kw">if</span> x % 2 == 0]
+<span class="cmt"># → [0, 4, 16, 36, 64]</span>
+
+<span class="cmt"># Diccionario por comprensión</span>
+mapa_cuadrados = {x: x**2 <span class="kw">for</span> x <span class="kw">in</span> range(5)}
+<span class="cmt"># → {0: 0, 1: 1, 2: 4, 3: 9, 4: 16}</span>
+
+<span class="cmt"># Set para eliminar duplicados y operaciones de conjuntos</span>
+a = {1, 2, 3, 4}
+b = {3, 4, 5, 6}
+print(a & b)   <span class="cmt"># intersección → {3, 4}</span>
+print(a | b)   <span class="cmt"># unión → {1, 2, 3, 4, 5, 6}</span>
+print(a - b)   <span class="cmt"># diferencia → {1, 2}</span>
+</code></pre>
+
+      <h4>Dataclasses (Python 3.7+)</h4>
+<pre><code><span class="kw">from</span> dataclasses <span class="kw">import</span> dataclass
+
+<span class="kw">@</span>dataclass
+<span class="kw">class</span> <span class="cls">Producto</span>:
+    id: <span class="cls">int</span>
+    nombre: <span class="cls">str</span>
+    precio: <span class="cls">float</span>
+    stock: <span class="cls">int</span> = 0
+
+p = Producto(1, <span class="str">"Laptop"</span>, 15999.99, 12)
+print(p)  <span class="cmt"># Producto(id=1, nombre='Laptop', precio=15999.99, stock=12)</span>
+</code></pre>
+
+      <h3>2. Funciones avanzadas</h3>
+
+      <h4>Argumentos *args y **kwargs</h4>
+<pre><code><span class="kw">def</span> <span class="fn">procesar_datos</span>(*args, **kwargs):
+    <span class="str">"""Procesa una cantidad variable de argumentos posicionales y nombrados."""</span>
+    <span class="kw">print</span>(<span class="str">"Posicionales:"</span>, args)
+    <span class="kw">print</span>(<span class="str">"Nombrados:"</span>, kwargs)
+
+procesar_datos(10, 20, 30, metodo=<span class="str">"media"</span>, redondeo=2)
+</code></pre>
+
+      <h4>Funciones de orden superior y lambdas</h4>
+<pre><code><span class="cmt"># map, filter, reduce</span>
+<span class="kw">from</span> functools <span class="kw">import</span> reduce
+
+numeros = [1, 2, 3, 4, 5, 6]
+pares = list(filter(<span class="kw">lambda</span> x: x % 2 == 0, numeros))
+cuadrados = list(map(<span class="kw">lambda</span> x: x**2, pares))
+suma = reduce(<span class="kw">lambda</span> a, b: a + b, cuadrados)
+print(pares, cuadrados, suma)  <span class="cmt"># [2, 4, 6] [4, 16, 36] 56</span>
+</code></pre>
+
+      <h4>Decoradores</h4>
+<pre><code><span class="kw">import</span> time
+<span class="kw">from</span> functools <span class="kw">import</span> wraps
+
+<span class="kw">def</span> <span class="fn">medir_tiempo</span>(func):
+    <span class="kw">@</span>wraps(func)
+    <span class="kw">def</span> <span class="fn">wrapper</span>(*args, **kwargs):
+        inicio = time.perf_counter()
+        resultado = func(*args, **kwargs)
+        fin = time.perf_counter()
+        print(f<span class="str">"{func.__name__} tardó {fin - inicio:.4f} s"</span>)
+        <span class="kw">return</span> resultado
+    <span class="kw">return</span> wrapper
+
+<span class="kw">@</span>medir_tiempo
+<span class="kw">def</span> <span class="fn">calcular_factorial</span>(n):
+    <span class="kw">return</span> 1 <span class="kw">if</span> n <= 1 <span class="kw">else</span> n * calcular_factorial(n-1)
+
+calcular_factorial(20)
+</code></pre>
+
+      <h3>3. Generadores e iteradores</h3>
+      <p>
+        Los generadores permiten crear secuencias de forma lazy (bajo demanda), 
+        ahorrando memoria cuando trabajamos con grandes volúmenes de datos.
+      </p>
+
+<pre><code><span class="kw">def</span> <span class="fn">generar_cuadrados</span>(n):
+    <span class="kw">for</span> i <span class="kw">in</span> range(n):
+        <span class="kw">yield</span> i ** 2
+
+<span class="cmt"># Uso</span>
+<span class="kw">for</span> valor <span class="kw">in</span> generar_cuadrados(5):
+    print(valor)  <span class="cmt"># 0 1 4 9 16</span>
+
+<span class="cmt"># Generator expression</span>
+suma_grandes = sum(x**2 <span class="kw">for</span> x <span class="kw">in</span> range(1_000_000))
+</code></pre>
+
+      <h3>4. Manejo de excepciones y contexto</h3>
+<pre><code><span class="kw">try</span>:
+    <span class="kw">with</span> open(<span class="str">"datos.csv"</span>, <span class="str">"r"</span>, encoding=<span class="str">"utf-8"</span>) <span class="kw">as</span> f:
+        contenido = f.read()
+<span class="kw">except</span> FileNotFoundError:
+    print(<span class="str">"El archivo no existe. Se creará uno de ejemplo."</span>)
+<span class="kw">except</span> PermissionError:
+    print(<span class="str">"No tienes permisos para leer el archivo."</span>)
+<span class="kw">else</span>:
+    print(<span class="str">"Archivo leído correctamente."</span>)
+<span class="kw">finally</span>:
+    print(<span class="str">"Operación finalizada."</span>)
+</code></pre>
+
+      <h3>5. Buenas prácticas (PEP 8 y más allá)</h3>
+      <ul>
+        <li>Nombres descriptivos en <code>snake_case</code> para variables y funciones.</li>
+        <li>Docstrings en todas las funciones y clases públicas.</li>
+        <li>Type hints (anotaciones de tipo) para mayor claridad.</li>
+        <li>Evitar efectos secundarios inesperados; preferir funciones puras cuando sea posible.</li>
+        <li>Usar virtual environments y <code>requirements.txt</code>.</li>
+      </ul>
+
+<pre><code><span class="kw">from</span> typing <span class="kw">import</span> List, Dict, Optional
+
+<span class="kw">def</span> <span class="fn">calcular_media</span>(valores: List[float]) -> Optional[float]:
+    <span class="str">"""
+    Calcula la media aritmética de una lista de números.
+    
+    Args:
+        valores: Lista de números flotantes.
+    
+    Returns:
+        La media o None si la lista está vacía.
+    """</span>
+    <span class="kw">if</span> <span class="kw">not</span> valores:
+        <span class="kw">return</span> <span class="kw">None</span>
+    <span class="kw">return</span> sum(valores) / len(valores)
+</code></pre>
+
+      <div class="callout info">
+        <strong>📌 Importante</strong>
+        En ciencia de datos, el 80 % del tiempo se dedica a la preparación de datos. 
+        Un código Python limpio y bien estructurado es la base para pipelines robustos.
+      </div>
+
+      <div class="btn-group">
+        <a href="index.html" class="btn">← Inicio</a>
+        <a href="02-numpy-pandas.html" class="btn btn-accent">Siguiente: NumPy y Pandas →</a>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <p><strong>GAB-2402 · Programación Avanzada</strong> · Tema 1.1</p>
+  </footer>
+</body>
+</html>
